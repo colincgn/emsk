@@ -31,7 +31,7 @@ type Kafka struct {
 	awsConfig aws.Config
 }
 
-func (k Kafka) ListTopics() ([]string, error) {
+func (k *Kafka) ListTopics() ([]string, error) {
 	c, err := sarama.NewClient(k.bootstrapServers, k.config)
 	if err != nil {
 		log.Println("Unable to create a kafka client", err)

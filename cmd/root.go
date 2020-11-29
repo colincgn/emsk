@@ -13,16 +13,18 @@ const (
 	// For example, --number is bound to EMSK_NUMBER.
 	envPrefix = "EMSK"
 	defaultBootstrapServers = "localhost:29092"
+	tlsEnabledEnvVariable = "TLS_ENABLED"
+	bootstrapServersEnvVariable = "BOOTSTRAP_SERVERS"
 )
 
 func init() {
 	viper.SetEnvPrefix(envPrefix)
-	err := viper.BindEnv("BOOTSTRAP_SERVERS")
+	err := viper.BindEnv(bootstrapServersEnvVariable)
 
 	if err != nil {
 		log.Fatal("unable to bind environment bootstrap variables")
 	}
-	err = viper.BindEnv("TLS_ENABLED")
+	err = viper.BindEnv(tlsEnabledEnvVariable)
 	if err != nil {
 		log.Fatal("unable to bind tls enabled variables")
 	}
@@ -39,12 +41,12 @@ func createKafkaClient() {
 
 	tls := false
 	if tlsEnabled == "" {
-		tls = viper.GetBool("TLS_ENABLED")
+		tls = viper.GetBool(tlsEnabledEnvVariable)
 	} else {
 		tls = strings.EqualFold(tlsEnabled, "true")
 	}
 
-	sEnv := viper.GetString("BOOTSTRAP_SERVERS")
+	sEnv := viper.GetString()
 	servers := []string{""}
 	if sEnv != "" {
 		servers = strings.Split(sEnv, ",")
