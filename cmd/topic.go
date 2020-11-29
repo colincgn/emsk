@@ -21,7 +21,7 @@ var listTopics = &cobra.Command{
 	Use:   "list",
 	Short: "Displays all topics for a cluster",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		topics, err := klient.ListTopics()
+		topics, err := kafka.ListTopics()
 		 if err != nil {
 		 	return err
 		 }

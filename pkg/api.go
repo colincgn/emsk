@@ -7,11 +7,7 @@ import (
 	"log"
 )
 
-type Client interface {
-	ListTopics() ([]string, error)
-}
-
-func NewKlient(awsRegion string, bootstrapServers []string, tlsEnabled bool) (*Klient, error) {
+func NewKafka(awsRegion string, bootstrapServers []string, tlsEnabled bool) (*Kafka, error) {
 
 	scfg := sarama.NewConfig()
 	scfg.Net.TLS.Enable = tlsEnabled
@@ -22,20 +18,20 @@ func NewKlient(awsRegion string, bootstrapServers []string, tlsEnabled bool) (*K
 		log.Fatalf("unable to load SDK config, %v", err)
 	}
 
-	return &Klient{
+	return &Kafka{
 		bootstrapServers: bootstrapServers,
 		config: scfg,
 		awsConfig: cfg,
 	}, nil
 }
 
-type Klient struct {
+type Kafka struct {
 	bootstrapServers []string
 	config *sarama.Config
 	awsConfig aws.Config
 }
 
-func (k Klient) ListTopics() ([]string, error) {
+func (k Kafka) ListTopics() ([]string, error) {
 	c, err := sarama.NewClient(k.bootstrapServers, k.config)
 	if err != nil {
 		log.Println("Unable to create a kafka client", err)

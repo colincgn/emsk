@@ -30,12 +30,12 @@ func init() {
 	initBootstrapServersFlag()
 	initTslEnabledFlag()
 
-	cobra.OnInitialize(createClient)
+	cobra.OnInitialize(createKafkaClient)
 }
 
-var klient *pkg.Klient
+var kafka *pkg.Kafka
 
-func createClient() {
+func createKafkaClient() {
 
 	tls := false
 	if tlsEnabled == "" {
@@ -52,12 +52,12 @@ func createClient() {
 		servers = strings.Split(bootstrapServers, ",")
 	}
 
-	k, err := pkg.NewKlient("us-west-2", servers, tls)
+	k, err := pkg.NewKafka("us-west-2", servers, tls)
 
 	if err != nil {
 		log.Fatal("Unable to create a Kafka client", err)
 	}
-	klient = k
+	kafka = k
 }
 
 var tlsEnabled string
