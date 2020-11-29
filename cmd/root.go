@@ -46,7 +46,7 @@ func createKafkaClient() {
 		tls = strings.EqualFold(tlsEnabled, "true")
 	}
 
-	sEnv := viper.GetString()
+	sEnv := viper.GetString(bootstrapServersEnvVariable)
 	servers := []string{""}
 	if sEnv != "" {
 		servers = strings.Split(sEnv, ",")
