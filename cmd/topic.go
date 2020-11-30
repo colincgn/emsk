@@ -3,13 +3,12 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"sort"
 )
 
 var topicCmd = &cobra.Command{
 	Use:   "topic",
-	Short: `
-Run helpful topic commands
-`,
+	Short: `list topic information`,
 }
 
 func init() {
@@ -25,6 +24,7 @@ var listTopics = &cobra.Command{
 		 if err != nil {
 		 	return err
 		 }
+		 sort.Strings(topics)
 		 for _, topic := range topics {
 		 	fmt.Println(topic)
 		 }
