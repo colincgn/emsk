@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 	"github.com/google/uuid"
 	"log"
+	"sort"
 )
 
 type Kafka struct {
@@ -57,7 +58,12 @@ func (k *Kafka) ListTopics() ([]string, error) {
 		return nil, err
 	}
 	defer c.Close()
-	return c.Topics()
+	topics, err := c.Topics()
+	if err != nil {
+		return nil, err
+	}
+	sort.Strings(topics)
+	return topics, err
 }
 
 func (k *Kafka) ListConsumerGroups() (*[]ConsumerGroup, error) {
@@ -137,6 +143,9 @@ func (k *Kafka) ListConsumerGroups() (*[]ConsumerGroup, error) {
 		cgroups = append(cgroups, cgroup)
 	}
 
+	sort.SliceStable(cgroups, func(i, j int) bool {
+		return cgroups[i].Id < cgroups[j].Id
+	})
 	return &cgroups, nil
 }
 

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
-	"sort"
 )
 
 var consumergroupCommand = &cobra.Command{
@@ -27,10 +26,6 @@ var listConsumerGroups = &cobra.Command{
 			return err
 		}
 		cgroups := *consumergroups
-		sort.SliceStable(cgroups, func(i, j int) bool {
-			return cgroups[i].Id < cgroups[j].Id
-		})
-
 		cgroupJSON, err := json.MarshalIndent(cgroups, "", "  ")
 		fmt.Println(string(cgroupJSON))
 		return nil
