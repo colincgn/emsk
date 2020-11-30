@@ -28,8 +28,8 @@ This will create an executable binary with a few handy commands when working wit
 For convenience, you can use some environment variables instead of passing in command line flags on each call.
 
 ```
-EMSK_BOOTSTRAP_SERVERS=1-aws-msk-bootstrap-server:9094,2-aws-msk-bootstrap-server:9094
-EMSK_TLS_ENABLED=TRUE
+export EMSK_BOOTSTRAP_SERVERS=1-aws-msk-bootstrap-server:9094,2-aws-msk-bootstrap-server:9094
+export EMSK_TLS_ENABLED=TRUE
 ```
 
 
