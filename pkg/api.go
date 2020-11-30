@@ -23,7 +23,7 @@ type ConsumerGroup struct {
 	Id              string
 	ActiveMembers   int
 	Members         []Member
-	LastKnownStatus string
+	LastKnownStatus *string
 	FunctionArn     *string
 }
 
@@ -105,9 +105,11 @@ func (k *Kafka) ListConsumerGroups() (*[]ConsumerGroup, error) {
 		for _, groupMemberDescription := range members {
 			memberMetadata, err := groupMemberDescription.GetMemberMetadata()
 			if err != nil {
-				cgroup.LastKnownStatus = "Error getting member metadata"
+				errMessage := "Error getting member metadata"
+				cgroup.LastKnownStatus = &errMessage
 			} else {
-				cgroup.LastKnownStatus = "OK"
+				successStatus := "OK"
+				cgroup.LastKnownStatus = &successStatus
 				topics := memberMetadata.Topics
 				member := Member{
 					ClientId: groupMemberDescription.ClientId,
@@ -129,6 +131,7 @@ func (k *Kafka) ListConsumerGroups() (*[]ConsumerGroup, error) {
 				}
 			} else {
 				cgroup.FunctionArn = req.FunctionArn
+				cgroup.LastKnownStatus = req.LastProcessingResult
 			}
 		}
 		cgroups = append(cgroups, cgroup)
