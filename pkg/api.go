@@ -13,6 +13,25 @@ import (
 	"log"
 )
 
+type Kafka struct {
+	bootstrapServers []string
+	config           *sarama.Config
+	awsConfig        aws.Config
+}
+
+type ConsumerGroup struct {
+	Id              string
+	ActiveMembers   int
+	Members         []Member
+	LastKnownStatus string
+	FunctionArn     *string
+}
+
+type Member struct {
+	ClientId string
+	Topics   []string
+}
+
 func NewKafka(awsRegion string, bootstrapServers []string, tlsEnabled bool) (*Kafka, error) {
 
 	scfg := sarama.NewConfig()
@@ -31,12 +50,6 @@ func NewKafka(awsRegion string, bootstrapServers []string, tlsEnabled bool) (*Ka
 	}, nil
 }
 
-type Kafka struct {
-	bootstrapServers []string
-	config           *sarama.Config
-	awsConfig        aws.Config
-}
-
 func (k *Kafka) ListTopics() ([]string, error) {
 	c, err := sarama.NewClient(k.bootstrapServers, k.config)
 	if err != nil {
@@ -45,19 +58,6 @@ func (k *Kafka) ListTopics() ([]string, error) {
 	}
 	defer c.Close()
 	return c.Topics()
-}
-
-type ConsumerGroup struct {
-	Id              string
-	ActiveMembers   int
-	Members         []Member
-	LastKnownStatus string
-	FunctionArn     *string
-}
-
-type Member struct {
-	ClientId string
-	Topics   []string
 }
 
 func (k *Kafka) ListConsumerGroups() (*[]ConsumerGroup, error) {
@@ -118,7 +118,7 @@ func (k *Kafka) ListConsumerGroups() (*[]ConsumerGroup, error) {
 		}
 
 		// If UUID, then check which lambda function this belongs to.
-		if ok := IsValidUUID(groupDescription.GroupId); ok {
+		if ok := isValidUUID(groupDescription.GroupId); ok {
 			input := &lambda.GetEventSourceMappingInput{
 				UUID: aws.String(groupDescription.GroupId),
 			}
@@ -137,7 +137,7 @@ func (k *Kafka) ListConsumerGroups() (*[]ConsumerGroup, error) {
 	return &cgroups, nil
 }
 
-func IsValidUUID(u string) bool {
+func isValidUUID(u string) bool {
 	_, err := uuid.Parse(u)
 	return err == nil
 }
